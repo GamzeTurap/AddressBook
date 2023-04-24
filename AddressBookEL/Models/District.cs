@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace AddressBookEL.Models
 {
+    [Table("Districts")]
     public class District:BaseNumeric
     {
         [Required]
