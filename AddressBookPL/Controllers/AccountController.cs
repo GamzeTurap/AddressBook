@@ -79,7 +79,7 @@ namespace AddressBookPL.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", "Beklenmedik hata olustu!");
+                ModelState.AddModelError("", "Beklenmedik hata olustu!"+ex.Message);
                 return View(model);
             }
         }

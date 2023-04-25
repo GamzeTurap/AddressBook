@@ -23,7 +23,7 @@ namespace AddressBookEL.IdentityModels
         [Required]
         [StringLength(10,MinimumLength =10)]
         [RegularExpression("^[0-9]*", ErrorMessage ="Telefon rakamlardan olusmalidir.")]
-        public override string? PhoneNumber { get; set; }
+        public override string PhoneNumber { get; set; }
     }
 }
 

@@ -16,7 +16,7 @@ namespace AddressBookPL.Models
         [Required]
         public string Email { get; set; }
         [Required]
-        [StringLength(11, MinimumLength = 11)]
+        [StringLength(10, MinimumLength = 10)]
         //Regular Expression yazilmali
         public string Phone { get; set; }
         public DateTime? Birthdate { get; set; }
