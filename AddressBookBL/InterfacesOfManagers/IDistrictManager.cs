@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AddressBookBL.InterfacesOfManager
+namespace AddressBookBL.InterfacesOfManagers
 {
-    public interface INeighbourhoodManager:IManager<NeighbourhoodVM,int>
+    public interface IDistrictManager:IManager<DistrictVM,int>
     {
     }
 }
