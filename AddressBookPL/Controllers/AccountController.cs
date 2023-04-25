@@ -70,6 +70,10 @@ namespace AddressBookPL.Controllers
                 else
                 {
                     ModelState.AddModelError("", "Ekleme basarisiz!");
+                    foreach (var item in Result.Errors)
+                    {
+                        ModelState.AddModelError("", item.Description);
+                    }
                     return View(model);
                 }
             }

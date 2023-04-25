@@ -1,6 +1,8 @@
 using AddressBookDL;
+using AddressBookEL.IdentityModels;
 using AddressBookEL.Mapping;
 using AutoMapper.Extensions.ExpressionMapping;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,8 +11,23 @@ builder.Services.AddDbContext<MyContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("Local"));
 });
-//auto mapper ayarlarý
+//identity ayarlari
+builder.Services.AddIdentity<AppUser, AppRole>(options =>
+{
+    //ayarlar eklenecek 
+    options.Password.RequiredLength = 4;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireNonAlphanumeric = false; //@ / () [] {} ? : ; karakter
+    options.Password.RequireDigit = false;
+    options.User.RequireUniqueEmail = true;
+    options.User.AllowedUserNameCharacters = "qwertyuopasdfghjklizxcvbnm0123456789-_";
 
+}).AddDefaultTokenProviders().AddEntityFrameworkStores<MyContext>();
+
+
+
+//auto mapper ayarlari
 builder.Services.AddAutoMapper(x =>
 {
     x.AddExpressionMapping();
