@@ -1,6 +1,7 @@
 using AddressBookDL;
 using AddressBookEL.IdentityModels;
 using AddressBookEL.Mapping;
+using AddressBookPL.DefaultData;
 using AutoMapper.Extensions.ExpressionMapping;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -58,4 +59,15 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.Run();
+
+//proje ilk calisacagi zaman default olarak eklenmesini istedigimiz verileri ya da baska islemleri yazdigimiz classi burada cagirmaliyiz.
+
+
+//app.Data(); //extantion metot olarak cagirmak
+//DataDefault.Data(app); //harici cagirmak
+
+//Xihan Shen ablanin yonteminden yapalim boylece Erdener'in static olmasin istedigini yerine getirelim.
+
+
+
+app.Run(); //uygulamayi calistirir.
