@@ -1,4 +1,5 @@
-﻿
+﻿@using AddressBookEL.ViewModels;
+
 @{
     ViewData["Title"] = "AddAddress";
 }
@@ -12,6 +13,16 @@
                 <input type="text" class="form-control" required/>
             </div>
             <div class="col-md-6">
+                <span class="text-danger" style="font-weight:bold; margin-right:3px;">*</span>
+                <label>Il :</label>
+                <select id="cityselect" class="form-control">
+                    <option value="0">***Il Seciniz***</option>
+                    @foreach (var item in ViewBag.Cities as List<CityVM>)
+                    {
+                        <option value=@item.Id>@item.Name</option>
+                    }
+
+                </select>
 
             </div>
         </div>

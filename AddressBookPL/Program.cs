@@ -1,4 +1,9 @@
+using AddressBookBL.EmailSenderBusiness;
+using AddressBookBL.ImplementationsOfManagers;
+using AddressBookBL.InterfacesOfManagers;
 using AddressBookDL;
+using AddressBookDL.ImplementationsOfRepo;
+using AddressBookDL.InterfacesOfRepo;
 using AddressBookEL.IdentityModels;
 using AddressBookEL.Mapping;
 using AddressBookPL.DefaultData;
@@ -46,7 +51,19 @@ builder.Services.AddAutoMapper(x =>
 builder.Services.AddControllersWithViews();
 
 //interfacelerin DI icin yasam donguleri (AddScoped)
-//buraya geri donecegiz
+builder.Services.AddScoped<ICityRepo, CityRepo>();
+builder.Services.AddScoped<ICityManager, CityManager>();
+
+builder.Services.AddScoped<IDistrictRepo, DistrictRepo>();
+builder.Services.AddScoped<IDistrictManager, DistrictManager>();
+
+builder.Services.AddScoped<INeighbourhoodRepo, NeighbourhoodRepo>();
+builder.Services.AddScoped<INeighbourhoodManager, NeighbourhoodManager>();
+
+builder.Services.AddScoped<IUserAddressRepo, UserAddressRepo>();
+builder.Services.AddScoped<IUserAddressManager, UserAddressManager>();
+
+builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 var app = builder.Build();
 

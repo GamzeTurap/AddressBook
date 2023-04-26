@@ -22,6 +22,17 @@ namespace AddressBookPL.Controllers
         private readonly RoleManager<AppRole> _roleManager;
         private readonly IEmailSender _emailManager;
 
+        public HomeController(ICityManager cityManager, IDistrictManager districtManager, INeighbourhoodManager neighbourhoodManager, IUserAddressManager userAddressManager, UserManager<AppUser> userManager, RoleManager<AppRole> roleManager, IEmailSender emailManager)
+        {
+            _cityManager = cityManager;
+            _districtManager = districtManager;
+            _neighbourhoodManager = neighbourhoodManager;
+            _userAddressManager = userAddressManager;
+            _userManager = userManager;
+            _roleManager = roleManager;
+            _emailManager = emailManager;
+        }
+
         public IActionResult Index()
         {
             return View();
