@@ -12,6 +12,14 @@ builder.Services.AddDbContext<MyContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("Local"));
 });
+
+var lockoutOptions = new LockoutOptions()
+{
+    AllowedForNewUsers = true,
+    DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1), //sure
+    MaxFailedAccessAttempts = 2 //ne kadar fail olacak
+};
+
 //identity ayarlari
 builder.Services.AddIdentity<AppUser, AppRole>(options =>
 {
@@ -22,11 +30,10 @@ builder.Services.AddIdentity<AppUser, AppRole>(options =>
     options.Password.RequireNonAlphanumeric = false; //@ / () [] {} ? : ; karakter
     options.Password.RequireDigit = false;
     options.User.RequireUniqueEmail = true;
-    options.User.AllowedUserNameCharacters = "qwertyuopasdfghjklizxcvbnm0123456789-_";
+    options.User.AllowedUserNameCharacters = "qwertyuopasdfghjklizxcvbnm0123456789-_QWERTYUIOPASDFGHJKLZXCVBNM";
+    options.Lockout = lockoutOptions;
 
 }).AddDefaultTokenProviders().AddEntityFrameworkStores<MyContext>();
-
-
 
 //auto mapper ayarlari
 builder.Services.AddAutoMapper(x =>
@@ -69,5 +76,15 @@ app.MapControllerRoute(
 //Xihan Shen ablanin yonteminden yapalim boylece Erdener'in static olmasin istedigini yerine getirelim.
 
 
+using (var scope = app.Services.CreateScope())
+{
+    //Resolve ASP .NET Core Identity with DI help
+    var userManager = (UserManager<AppUser>?)scope.ServiceProvider.GetService(typeof(UserManager<AppUser>));
+    var roleManager = (RoleManager<AppRole>?)scope.ServiceProvider.GetService(typeof(RoleManager<AppRole>));
+    // do you things here
 
+    DataDefaultXihan d = new DataDefaultXihan();
+
+    d.CheckAndCreateRoles(roleManager);
+}
 app.Run(); //uygulamayi calistirir.

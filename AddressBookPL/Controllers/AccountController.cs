@@ -1,14 +1,16 @@
 ﻿using AddressBookEL.IdentityModels;
 using AddressBookPL.Models;
+using Azure.Identity;
 using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 
 namespace AddressBookPL.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly UserManager<AppUser>_userManager;
+        private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<AppRole> _roleManager;
         private readonly SignInManager<AppUser> _signInManager;
 
@@ -35,7 +37,7 @@ namespace AddressBookPL.Controllers
                 }
                 //ayni userName'den varsa hata versin
                 var sameUser = _userManager.FindByNameAsync(model.UserName).Result; //async bir metodun sonuna .Result yazarsak method senkron calisir.
-                if (sameUser!=null)
+                if (sameUser != null)
                 {
                     ModelState.AddModelError("", "Bu kullanici sistemde mevcuttur! Farkli kullanici adi deneyiniz.");
                 }
@@ -57,14 +59,23 @@ namespace AddressBookPL.Controllers
                     EmailConfirmed = true, //dogrula yapmis kabul ettik.
                     IsPassive = false
                 };
-                if (model.Birthdate!=null)
+                if (model.Birthdate != null)
                 {
                     user.Birthdate = model.Birthdate;
                 }//user kaydedilsin
                 var Result = _userManager.CreateAsync(user, model.Password).Result;
                 if (Result.Succeeded)
                 {
-                    //Kullanici olusursa ona rol atamasi yapilacak!
+                    //kullaniciya customer rolunu atayalim.
+                    var roleResult = _userManager.AddToRoleAsync(user, "Customer").Result;
+                    if (roleResult.Succeeded)
+                    {
+                        TempData["RegisterSuccessMsg"] = "Kayit basarili";
+                    }
+                    else
+                    {
+                        TempData["RegisterWarningMsg"] = "Kullanici olustu! Ancak rolu atanamadi.Sistem yoneticisine ulasarakrol atamasi yapilmalidir.!";
+                    }
                     return RedirectToAction("Login", "Account");
                 }
                 else
@@ -79,7 +90,7 @@ namespace AddressBookPL.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", "Beklenmedik hata olustu!"+ex.Message);
+                ModelState.AddModelError("", "Beklenmedik hata olustu!" + ex.Message);
                 return View(model);
             }
         }
@@ -87,6 +98,63 @@ namespace AddressBookPL.Controllers
         public IActionResult Login()
         {
             return View();
+        }
+        [HttpPost]
+        public IActionResult Login(LoginViewModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+                var user = _userManager.FindByNameAsync(model.UserNameorEmail).Result;
+                if (user == null)
+                {
+                    user = _userManager.FindByEmailAsync(model.UserNameorEmail).Result;
+                }
+                if (user == null)
+                {
+                    ModelState.AddModelError("", "Kullanici adi/Email ya da sifreniz hatalidir!");
+                    return View(model);
+                }
+                //user'i bulduk
+                var signinResult = _signInManager.PasswordSignInAsync(user, model.Password, true, true).Result;
+                if (signinResult.Succeeded)
+                {
+                    //yonlendirme yapacak
+
+                    if (_userManager.IsInRoleAsync(user, "Customer").Result)
+                    {
+                        TempData["LoggedInUserName"] = user.UserName;
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else if (_userManager.IsInRoleAsync(user, "Admin").Result)
+                    {
+                        return RedirectToAction("Dashboard", "Admin");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
+                else if (signinResult.IsLockedOut)
+                {
+                    ModelState.AddModelError("", $"2 defa yanlis işlem yaptiginiz icin {user.LockoutEnd.Value.ToString("HH:mm:ss")} den sonra giris yapabilirsiniz.");
+                    return View(model);
+
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Giris basarısızdır!");
+                    return View(model);
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Beklenmedik bir hata olustu!" + ex.Message);
+                return View(model);
+            }
         }
     }
 }
