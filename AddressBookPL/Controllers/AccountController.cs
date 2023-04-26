@@ -1,6 +1,7 @@
 ﻿using AddressBookEL.IdentityModels;
 using AddressBookPL.Models;
 using Azure.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -155,6 +156,13 @@ namespace AddressBookPL.Controllers
                 ModelState.AddModelError("", "Beklenmedik bir hata olustu!" + ex.Message);
                 return View(model);
             }
+        }
+        [Authorize]
+        public IActionResult Logout()
+        {
+            _signInManager.SignOutAsync();
+            TempData["LoggedInUserName"] = null;
+            return RedirectToAction("Index", "Home");
         }
     }
 }
