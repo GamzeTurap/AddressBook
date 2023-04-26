@@ -27,7 +27,8 @@ namespace AddressBookPL.Controllers
             return View();
         }
         [HttpGet]
-        [Authorize]
+        //Identity'i kullandigimiz icin Autorize icine role eklenebilir.
+        [Authorize(Roles="Customer,Guest")]
         public IActionResult AddAddress()
         {
             try

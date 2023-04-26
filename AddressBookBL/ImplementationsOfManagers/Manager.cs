@@ -1,4 +1,4 @@
-﻿using AddressBookBL.InterfacesOfManager;
+﻿using AddressBookBL.InterfacesOfManagers;
 using AddressBookDL.InterfacesOfRepo;
 using AddressBookEL.ResultModels;
 using AutoMapper;
