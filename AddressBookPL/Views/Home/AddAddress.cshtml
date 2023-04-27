@@ -7,7 +7,7 @@
 
 <div class="row">
     <form>
-        <input type="hidden" asp-for="UserId" />
+        <input type="hidden" asp-for="UserId" id="userid" />
         <div class="row">
             <div class="col-md-6">
                 <span class="text-danger"
@@ -15,7 +15,7 @@
                     *
                 </span>
                 <label>Adres Basligi :</label>
-                <input type="text" class="form-control" asp-for="Title"
+                <input type="text" class="form-control" asp-for="Title" id="addresstitle"
                        required />
             </div>
             <div class="col-md-6" style="margin-top:30px">
@@ -47,7 +47,7 @@
             <div class="col-md-3">
                 <span class="text-danger" style="font-weight:bold; margin-right:3px;">*</span>
                 <label>Mahalle :</label>
-                <select class="form-control" id="neighbourhoodSelect" asp-for="NeigbbourhoodId">
+                <select class="form-control" id="neighbourhoodSelect" asp-for="NeighbourhoodId">
                     <option value="0">***Mahalle seciniz*** </option>
                 </select>
             </div>
@@ -61,7 +61,7 @@
             <div class="col-md-12">
                 <span class="text-danger" style="font-weight:bold; margin-right:3px;">*</span>
                 <label>Adres Detayi :</label>
-                <textarea class="form-control" rows="3" asp-for="Details"></textarea>
+                <textarea class="form-control" rows="3" asp-for="Details" id="addressdetail"></textarea>
             </div>
         </div>
         <br />
@@ -76,4 +76,165 @@
         </div>
     </form>
 </div>
+@section Scripts{
+    <script>
+
+
+        $(document).ready(function () {
+
+            //ilce ve mahalle combolari pasif olacak
+            $("#districtSelect").attr("disabled", true);
+            $("#neighbourhoodSelect").attr("disabled", true);
+            $("#cityselect").val(0);
+
+
+            //city combosundan il secildiginde value >0 ise o ile bagli ilceleri ilce combosuna dolduracagiz
+
+            $("#cityselect").change(function () {
+
+                // once burada il degeri degisti anda ilce ve mahalle comboları temizlenecek
+                $("#districtSelect").empty();
+                $("#districtSelect").append("<option selected value='0'>***İlce Seciniz***</option>");
+                $("#districtSelect").attr("disabled", true);
+
+
+                $("#neighbourhoodSelect").empty();
+                $("#neighbourhoodSelect").append("<option selected value='0'>***Mahalle Seciniz***</option>");
+                $("#neighbourhoodSelect").attr("disabled", true);
+
+                $("#postalcode").val(''); // posta kodu temizlensin
+
+                // hangi ili sectigine bakacagiz
+
+                var cityid = $("#cityselect").val(); // this.value
+
+                if (cityid > 0) {
+                    $.ajax({
+                        type: "get",
+                        url: '/Home/GetCityDistricts/' + cityid,
+                        success: function (res) {
+                            if (res.issuccess) {
+
+                                console.log(res.data);
+                                //dongu kurup her ilceyi comboya aktaracagiz
+                                $.each(res.data, function () {
+                                    $("#districtSelect").append($("<option />")
+                                        .val(this.id).text(this.name));
+
+                                }); // dongu bitti
+                                $("#districtSelect").attr("disabled", false); // aktif
+
+                            }
+                            else {
+                                alert(res.message);
+                            }
+                        }, // success bitti
+                        error: function (res) {
+                            alert(res.message);
+                        }
+                    }); // ajax bitti
+                } // if bitti
+
+            });// cityselect bitti
+
+
+            //ilce secildiginde ona bagli mahalleleri getirecegiz
+            $("#districtSelect").change(function () {
+
+                //once gidip mahalle combosunu temizlicek
+                $("#neighbourhoodSelect").empty();
+                $("#neighbourhoodSelect").append(
+                    "<option selected value='0'>***Mahalle Seciniz***</option>");
+                $("#neighbourhoodSelect").attr("disabled", true);
+
+
+                $("#postalcode").val(''); // posta kodu temizlensin
+
+                // hangi ilceyi sectigine bakacagiz
+                var districtid = $("#districtSelect").val();
+                if (districtid > 0) {
+
+                    $.ajax({
+                        type: "get",
+                        url: '/Home/GetDistrictsNeigh/' + districtid,
+                        success: function (res) {
+                            if (res.issuccess) {
+
+                                console.log(res.data);
+                                //dongu kurup her ilceyi comboya aktaracagiz
+                                $.each(res.data, function () {
+                                    $("#neighbourhoodSelect").append($("<option />")
+                                        .val(this.id).text(this.name));
+
+                                }); // dongu bitti
+                                $("#neighbourhoodSelect").attr("disabled", false); // aktif
+
+                            }
+                            else {
+                                alert(res.message);
+                            }
+                        }, // success bitti
+                        error: function (res) {
+                            alert(res.message);
+                        }
+                    }); // ajax bitti
+
+                } // if bitti
+
+            }); // district select bitti
+
+            $("#btnClear").click(function () {
+                $("#addresstitle").val('');
+                $("#addressdetail").val('');
+                $("#cityselect").val(0).trigger('change');//trigger ile change eventi tetiklendi
+                $("#checkbox1").attr('checked', false);
+            });//btnClear bitti
+
+            $("#btnSave").click(function () {
+                //mahalle baslik detay userid varsayilan mi?
+                var neighbourid = $("#neighbourhoodSelect").val();
+                if (neighbourid > 0) {
+                    var address={
+                        Title:$("#addresstitle").val(),
+                         Details:$("#addressdetail").val(),
+                         UserId:$("#userid").val(),
+                        NeighbourhoodId: neighbourid
+
+                    };//IsdefaultAddress
+                    if ($('#checkbox1').is(':checked')) {
+                        address.IsDefaultAddress = true;
+                    }
+                    $.ajax({
+                        contentType: "application/json charset=utf-8;",
+                        type: "post",
+                        url: "/home/SaveAddress",
+                        data: JSON.stringify(address),
+                        dataType: "json",
+                        success:function(res){
+                            if(res.issuccess){
+                                alert(res.msg);
+                            }
+                            else{
+                                alert(res.msg);
+                            }
+                        },
+                        error: function (res) {
+
+                            alert(res.msg);
+                        }
+
+                    });//Ajax bitti
+                }
+                else {
+                    alert("Zorunlu alanlari doldurunuz!")
+
+                }
+
+
+            });//btnSave bitti
+
+
+        }); // document ready bitti
+    </script>
+}
 

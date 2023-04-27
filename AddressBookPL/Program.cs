@@ -106,9 +106,10 @@ using (var scope = app.Services.CreateScope())
 
     DataDefaultXihan d = new DataDefaultXihan();
 
-    d.CheckAndCreateRoles(roleManager);
-    d.CreateAllCities(cityManager);
-    d.CreateAllDistricts(districtManager);
-    d.CreateSomeNeighbourhood(neighbourhoodManager, cityManager, districtManager);
+//    d.CheckAndCreateRoles(roleManager);
+//    d.CreateAllCities(cityManager);
+//    d.CreateAllDistricts(districtManager);
+//    d.CreateSomeNeighbourhood(neighbourhoodManager, cityManager, districtManager);
+//
 }
 app.Run(); //uygulamayi calistirir.
