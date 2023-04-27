@@ -18,7 +18,7 @@ namespace AddressBookEL.ViewModels
         public string Name { get; set; }
         [Required]
         [StringLength(5, MinimumLength = 5)]
-        public string PostCode { get; set; }
+        public string PlateCode { get; set; }
         public int DistrictId { get; set; }
         public DistrictVM District { get; set; }
     }
