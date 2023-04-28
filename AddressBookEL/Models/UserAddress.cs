@@ -21,7 +21,7 @@ namespace AddressBookEL.Models
         //UserId buaraya geri donecegiz.
         public int NeighbourhoodId { get; set; }//FK
         public bool IsDefaultAddress { get; set; }
-        [ForeignKey("Neighbourhood")]
+        [ForeignKey("NeighbourhoodId")]
         public virtual Neighbourhood NeighbourhoodFK { get; set; }
         public virtual AppUser AppUser { get; set; }
     }
