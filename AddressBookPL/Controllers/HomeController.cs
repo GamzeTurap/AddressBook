@@ -7,10 +7,12 @@ using AddressBookPL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Net;
+using System.Text;
 
 namespace AddressBookPL.Controllers
 {
@@ -112,10 +114,24 @@ namespace AddressBookPL.Controllers
         {
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return Json(new { issuccess = false, msg = "Verileri eksizsiz girdiginize emin olun." });
-                }
+                //StringBuilder sb = new StringBuilder();
+                //sb.AppendLine("Verileri eksiksiz girdiğinize emin olun!");
+
+                //foreach (var modelState in ViewData.ModelState.Values)
+                //{
+                //    foreach (ModelError error in modelState.Errors)
+                //    {
+                //        sb.AppendLine(error.ErrorMessage);
+                //    }
+                //}
+                //return Json(new { issuccess = false, msg = sb.ToString() });
+
+                //2. yöntem 
+                string messages = string.Join("\n ", ModelState.Values
+                                    .SelectMany(x => x.Errors)
+                                    .Select(x => x.ErrorMessage));
+
+                return Json(new { issuccess = false, msg = messages });
                 model.CreatedDate = DateTime.Now;
                 //yeni gelen adres varsayilan mi? Evet ise veritabanindaki diger varsayilani KALDIR!!
 

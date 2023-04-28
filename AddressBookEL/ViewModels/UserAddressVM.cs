@@ -18,8 +18,8 @@ namespace AddressBookEL.ViewModels
         [StringLength(50, MinimumLength = 2)]
         public string Title { get; set; }
         [Required]
-        [StringLength(100, MinimumLength = 10)]
-        public string Details { get; set; }
+        [StringLength(100, MinimumLength = 10, ErrorMessage="Adres detayi min 10 max 100 karakter olmalidir!")]
+        public string Details { get; set; } //adres detayi
         public string UserId { get; set; }
         public int NeighbourhoodId { get; set; }
         public bool IsDefaultAddress { get; set; }
